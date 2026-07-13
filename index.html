@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Secret Santa Ladder Draw</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --pine: #1B4D3E;
+    --pine-dark: #123328;
+    --cherry: #C41E3A;
+    --gold: #E8B923;
+    --gold-dark: #B8860B;
+    --card: #F3F7F5;
+    --ink: #1B1B1B;
+    --muted: #5B6B66;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Calibri, Arial, sans-serif;
+    background: var(--pine-dark);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 60px; }
+  header { text-align: center; color: #fff; margin-bottom: 28px; }
+  header h1 {
+    font-family: Cambria, Georgia, serif;
+    font-size: 34px;
+    margin: 0 0 6px;
+  }
+  header p { color: var(--gold); margin: 0; font-size: 15px; }
+
+  .panel {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+  .panel h2 {
+    font-family: Cambria, Georgia, serif;
+    font-size: 20px;
+    color: var(--pine);
+    margin: 0 0 12px;
+  }
+  .muted { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+  .letter-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .letter-btn {
+    padding: 12px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--card);
+    background: var(--card);
+    color: var(--pine);
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .letter-btn:hover { border-color: var(--pine); }
+  .letter-btn.selected {
+    background: var(--pine);
+    border-color: var(--pine);
+    color: #fff;
+  }
+
+  .reveal-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button.primary, button.secondary {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 11px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  button.primary { background: var(--cherry); color: #fff; }
+  button.primary:disabled { background: #d9b9be; cursor: not-allowed; }
+  button.secondary { background: var(--card); color: var(--pine); }
+  button.primary:hover:not(:disabled) { background: #a8172f; }
+  button.secondary:hover { background: #e4ece9; }
+
+  .selected-label { font-size: 13.5px; color: var(--muted); }
+  .selected-label b { color: var(--pine); }
+
+  .result-box {
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    background: var(--card);
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box .caption { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .result-box .name {
+    font-family: Cambria, Georgia, serif;
+    font-size: 26px;
+    color: var(--cherry);
+    font-weight: bold;
+  }
+  .result-box .address-block {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e7e4;
+  }
+  .result-box .address-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .result-box .address-text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .privacy-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  svg { display: block; width: 100%; height: auto; }
+  .ladder-rail { stroke: #d7ded9; stroke-width: 2; }
+  .ladder-rung { stroke: #d7ded9; stroke-width: 3; stroke-linecap: round; }
+  .ladder-path {
+    stroke: var(--cherry);
+    stroke-width: 4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 3000;
+    stroke-dashoffset: 3000;
+    transition: stroke-dashoffset 1.1s ease;
+  }
+  .ladder-path.draw { stroke-dashoffset: 0; }
+  .col-label {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    fill: var(--pine);
+    text-anchor: middle;
+  }
+  .col-label.hidden-label { fill: #cfd8d4; }
+
+  details.organizer { margin-top: 4px; }
+  details.organizer summary {
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--pine);
+    font-weight: bold;
+  }
+  .names-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .names-grid label {
+    font-size: 12px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .names-grid input {
+    width: 100%;
+    padding: 7px 8px;
+    border: 1px solid #d7ded9;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .names-actions { margin-top: 14px; display: flex; gap: 10px; }
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .pin-wrap {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--card);
+    border-radius: 10px;
+  }
+  .pin-label { font-size: 12.5px; color: var(--muted); display: block; margin-bottom: 8px; }
+  .pin-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pin-row input {
+    max-width: 140px;
+    padding: 9px 10px;
+    border: 1px solid #d7ded9;
+    border-radius: 8px;
+    font-size: 16px;
+    letter-spacing: 3px;
+  }
+  .pin-unlocked { font-size: 13px; color: var(--pine); font-weight: bold; }
+  .pin-error { margin-top: 8px; font-size: 12.5px; color: var(--cherry); min-height: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Secret Santa Ladder Draw</h1>
+    <p>You're a Secret Elf this Christmas &middot; 15 Members</p>
+  </header>
+
+  <div class="panel">
+    <h2>1. Pick your name</h2>
+    <p class="muted">Select your name below, then reveal your Secret Friend. Only your own result will ever be shown &mdash; nobody else's.</p>
+    <div class="letter-grid" id="letterGrid"></div>
+
+    <div class="pin-wrap" id="pinWrap" style="display:none;">
+      <label class="pin-label" for="pinInput">This name has a personal PIN. Enter it to unlock your result (ask the organizer if you don't know it).</label>
+      <div class="pin-row">
+        <input type="tel" inputmode="numeric" maxlength="4" id="pinInput" placeholder="4-digit PIN" />
+        <button class="secondary" id="unlockBtn">Unlock</button>
+        <span class="pin-unlocked" id="pinUnlockedLabel" style="display:none;">Unlocked</span>
+      </div>
+      <div class="pin-error" id="pinError"></div>
+    </div>
+
+    <div class="reveal-actions">
+      <button class="primary" id="revealBtn" disabled>Reveal my Secret Friend</button>
+      <button class="secondary" id="hideBtn" style="display:none;">Hide result</button>
+      <span class="selected-label" id="selectedLabel">No name selected yet</span>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <div class="caption">Your Secret Friend is</div>
+      <div class="name" id="resultName">-</div>
+      <div class="address-block">
+        <div class="address-label">Ship your gift to (office address)</div>
+        <div class="address-text" id="resultAddress">-</div>
+      </div>
+      <div class="privacy-note">Shh&hellip; keep it secret until Dec 23. Click "Hide result" before handing your device to someone else.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Watch the ladder</h2>
+    <p class="muted">The highlighted line traces your path down the ladder to your Secret Friend.</p>
+    <svg id="ladderSvg" viewBox="0 0 900 660" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <div class="panel">
+    <details class="organizer">
+      <summary>Organizer: edit names (optional)</summary>
+      <p class="muted" style="margin-top:10px;">
+        Type each person's name and click "Apply names" &mdash; the draw itself (who is whose Secret Friend) stays exactly
+        the same, only the labels change. This only updates the copy of the file open in <em>this</em> browser, so
+        re-save/export and redistribute the file to the team if you change anything.
+      </p>
+      <div class="names-grid" id="namesGrid"></div>
+      <div class="names-actions">
+        <button class="secondary" id="applyNamesBtn">Apply names</button>
+        <button class="secondary" id="resetNamesBtn">Reset to letters</button>
+      </div>
+      <p class="hint">Tip: after applying names, use your browser's "Save Page As &rarr; Webpage, HTML only" (or ask Claude to bake them in) to create the final version to share with the team.</p>
+    </details>
+  </div>
+</div>
+
+<script>
+  // ---- Fixed ladder data (generated once so every copy of this file matches) ----
+  const LADDER = {"n":15,"rows":46,"rungsPerRow":[[0,5,11],[1,9,13],[1,7,12],[9],[1,6],[2,4,7,13],[1,6,8,11],[2,4,6,8,11],[1,3,5,9],[0,2,5,10,12],[0,2,7,9,11],[1,4,6,8,10,13],[7,10,12],[1,3,5,7],[1,5,7],[1,3,5,8,11,13],[3,6],[0,3],[0,3,10],[3,8,10,12],[6,9,11],[8,10],[1,3,5,12],[4,6,11],[1,5],[0,4,7,10,13],[0,2,5,10,12],[0,3,7,10,13],[0,3,5,7,13],[0,4,8,10],[1,6,9,11],[4,7,9,11],[2,5,9,12],[0,3,5,8],[1,9,11],[3,5,8,11],[1,4,7,10],[1,6,9,11],[2,5],[1,3,5,8,12],[1,5,13],[3,8,12],[],[4,6,11,13],[0,6,8,10],[2,6,9,11]],"perm":[2,3,6,0,13,4,1,11,10,14,5,9,7,8,12]};
+
+  const LETTERS = "ABCDEFGHIJKLMNO".split("");
+
+  // Organizer: fill in real names here (leave "" to keep showing letters).
+  // This object can also be edited live via the "Organizer" panel below.
+  let NAMES = {
+    A: "Tracy", B: "Teresa", C: "Emily", D: "Velma", E: "Saki",
+    F: "Sean", G: "Hyeyeon", H: "Seongyeon", I: "Bo", J: "Lena",
+    K: "Fern", L: "Atsushi", M: "Yuito", N: "James", O: "Jolly"
+  };
+
+  // Office addresses (by country) — used for shipping instead of personal
+  // home addresses, since the team is spread across multiple countries.
+  // Gifts are received by the local office admin.
+  const OFFICES = {
+    taiwan: "Appier Taipei Office\n6F, No. 123, Songren Road\nTaipei 110, Taiwan",
+    japan: "Appier Tokyo Office\nMORI Tower (Atago Green Hills), 40F\n2-5-1 Atago, Minato-ku, Tokyo 105-6240, Japan",
+    korea: "Appier Seoul Office\n14F, T412 Building, 412 Teheran-ro\nGangnam-gu, Seoul 06193, South Korea",
+    hongkong: "Appier Hong Kong Office\n46F Lee Garden One, 33 Hysan Avenue\nCauseway Bay, Hong Kong",
+    china: "Appier Beijing Office\n7F, Block A, Ocean International Center\n56 East 4th Ring Road, Chaoyang District, Beijing, China"
+  };
+
+  // Organizer: which office each person's gift should ship to.
+  const ADDRESS_KEY = {
+    A: "taiwan", B: "taiwan", C: "hongkong", D: "taiwan", E: "japan",
+    F: "korea", G: "korea", H: "korea", I: "taiwan", J: "taiwan",
+    K: "taiwan", L: "japan", M: "japan", N: "taiwan", O: "china"
+  };
+
+  function labelFor(letter) {
+    const n = NAMES[letter];
+    return n && n.trim() ? n.trim() : "Person " + letter;
+  }
+
+  function addressFor(letter) {
+    const key = ADDRESS_KEY[letter];
+    return key && OFFICES[key] ? OFFICES[key] : "Address not set yet — ask the organizer.";
+  }
+
+  // Personal PINs — each person's own PIN should be shared with them privately
+  // (e.g. a 1:1 message), not posted where everyone can see it. This is a light
+  // deterrent against casual "let me try everyone's name" clicking, not real
+  // security — anyone who reads this file's source can still find every PIN.
+  const PINS = {
+    "A": "9364", "B": "1434", "C": "4832", "D": "2374", "E": "7421",
+    "F": "3434", "G": "9105", "H": "6818", "I": "6194", "J": "9897",
+    "K": "8126", "L": "4849", "M": "4447", "N": "2437", "O": "3474"
+  };
+
+  // ---- Letter selection grid ----
+  const letterGrid = document.getElementById("letterGrid");
+  let selected = null;
+  let unlocked = false;
+
+  const pinWrap = document.getElementById("pinWrap");
+  const pinInput = document.getElementById("pinInput");
+  const pinError = document.getElementById("pinError");
+  const pinUnlockedLabel = document.getElementById("pinUnlockedLabel");
+  const unlockBtn = document.getElementById("unlockBtn");
+  const revealBtn = document.getElementById("revealBtn");
+
+  function resetPinUI() {
+    unlocked = false;
+    pinInput.value = "";
+    pinError.textContent = "";
+    pinInput.style.display = "";
+    unlockBtn.style.display = "";
+    pinUnlockedLabel.style.display = "none";
+    revealBtn.disabled = true;
+  }
+
+  function tryUnlock() {
+    if (!selected) return;
+    if (pinInput.value.trim() === PINS[selected]) {
+      unlocked = true;
+      pinError.textContent = "";
+      pinInput.style.display = "none";
+      unlockBtn.style.display = "none";
+      pinUnlockedLabel.style.display = "inline";
+      revealBtn.disabled = false;
+    } else {
+      pinError.textContent = "That PIN doesn't match. Try again.";
+      pinInput.value = "";
+      pinInput.focus();
+    }
+  }
+  unlockBtn.addEventListener("click", tryUnlock);
+  pinInput.addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+
+  function renderLetterGrid() {
+    letterGrid.innerHTML = "";
+    LETTERS.forEach(letter => {
+      const btn = document.createElement("button");
+      btn.className = "letter-btn" + (selected === letter ? " selected" : "");
+      btn.textContent = labelFor(letter) === "Person " + letter ? letter : labelFor(letter);
+      btn.addEventListener("click", () => {
+        selected = letter;
+        hideResult();
+        renderLetterGrid();
+        resetPinUI();
+        pinWrap.style.display = "block";
+        document.getElementById("selectedLabel").innerHTML = "You selected: <b>" + labelFor(letter) + "</b>";
+      });
+      letterGrid.appendChild(btn);
+    });
+  }
+
+  // ---- SVG ladder drawing ----
+  const svg = document.getElementById("ladderSvg");
+  const N = LADDER.n, ROWS = LADDER.rows;
+  const marginX = 40, topY = 40, rowH = 12;
+  const bottomY = topY + ROWS * rowH;
+  const usableW = 900 - marginX * 2;
+  function xFor(i) { return marginX + (usableW / (N - 1)) * i; }
+
+  function buildStaticLadder() {
+    let svgHtml = "";
+    // vertical rails
+    for (let i = 0; i < N; i++) {
+      const x = xFor(i);
+      svgHtml += `<line class="ladder-rail" x1="${x}" y1="${topY}" x2="${x}" y2="${bottomY}" />`;
+    }
+    // rungs
+    LADDER.rungsPerRow.forEach((row, r) => {
+      const y = topY + r * rowH + rowH / 2;
+      row.forEach(i => {
+        svgHtml += `<line class="ladder-rung" x1="${xFor(i)}" y1="${y}" x2="${xFor(i + 1)}" y2="${y}" />`;
+      });
+    });
+    // top + bottom labels
+    LETTERS.forEach((letter, i) => {
+      const x = xFor(i);
+      svgHtml += `<text class="col-label" x="${x}" y="${topY - 14}">${letter}</text>`;
+      svgHtml += `<text class="col-label hidden-label" x="${x}" y="${bottomY + 24}">?</text>`;
+    });
+    svgHtml += `<path class="ladder-path" id="highlightPath" d="" />`;
+    svg.innerHTML = svgHtml;
+  }
+
+  function pathFor(startIndex) {
+    let pos = startIndex;
+    let points = [[xFor(pos), topY]];
+    for (let r = 0; r < ROWS; r++) {
+      const yTop = topY + r * rowH;
+      const yMid = yTop + rowH / 2;
+      const yBottom = topY + (r + 1) * rowH;
+      let swapped = false;
+      for (const i of LADDER.rungsPerRow[r]) {
+        if (pos === i) { points.push([xFor(pos), yMid]); pos = i + 1; points.push([xFor(pos), yMid]); swapped = true; break; }
+        if (pos === i + 1) { points.push([xFor(pos), yMid]); pos = i; points.push([xFor(pos), yMid]); swapped = true; break; }
+      }
+      points.push([xFor(pos), yBottom]);
+    }
+    return { d: "M " + points.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" L "), endIndex: pos };
+  }
+
+  function revealFor(letter) {
+    const startIndex = LETTERS.indexOf(letter);
+    const { d, endIndex } = pathFor(startIndex);
+    const pathEl = document.getElementById("highlightPath");
+    pathEl.setAttribute("d", d);
+    pathEl.classList.remove("draw");
+    // force reflow so the draw animation restarts
+    void pathEl.getBoundingClientRect();
+    pathEl.classList.add("draw");
+    return LETTERS[endIndex];
+  }
+
+  function clearHighlight() {
+    const pathEl = document.getElementById("highlightPath");
+    if (pathEl) { pathEl.classList.remove("draw"); pathEl.setAttribute("d", ""); }
+  }
+
+  // ---- Reveal / hide controls ----
+  const resultBox = document.getElementById("resultBox");
+  const resultName = document.getElementById("resultName");
+  const resultAddress = document.getElementById("resultAddress");
+  const hideBtn = document.getElementById("hideBtn");
+
+  function hideResult() {
+    resultBox.classList.remove("show");
+    hideBtn.style.display = "none";
+    clearHighlight();
+  }
+
+  revealBtn.addEventListener("click", () => {
+    if (!selected || !unlocked) return;
+    const targetLetter = revealFor(selected);
+    resultName.textContent = labelFor(targetLetter);
+    resultAddress.textContent = addressFor(targetLetter);
+    setTimeout(() => resultBox.classList.add("show"), 250);
+    hideBtn.style.display = "inline-block";
+  });
+
+  hideBtn.addEventListener("click", hideResult);
+
+  // ---- Organizer name editor ----
+  const namesGrid = document.getElementById("namesGrid");
+  function renderNamesGrid() {
+    namesGrid.innerHTML = "";
+    LETTERS.forEach(letter => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = `<label>${letter}</label><input type="text" data-letter="${letter}" placeholder="e.g. Alex" value="${NAMES[letter] || ""}" />`;
+      namesGrid.appendChild(wrap);
+    });
+  }
+  document.getElementById("applyNamesBtn").addEventListener("click", () => {
+    namesGrid.querySelectorAll("input").forEach(inp => {
+      NAMES[inp.dataset.letter] = inp.value;
+    });
+    selected = null;
+    hideResult();
+    resetPinUI();
+    pinWrap.style.display = "none";
+    document.getElementById("selectedLabel").textContent = "No name selected yet";
+    renderLetterGrid();
+    buildStaticLadder();
+  });
+  document.getElementById("resetNamesBtn").addEventListener("click", () => {
+    LETTERS.forEach(letter => NAMES[letter] = "");
+    renderNamesGrid();
+    selected = null;
+    hideResult();
+    resetPinUI();
+    pinWrap.style.display = "none";
+    document.getElementById("selectedLabel").textContent = "No name selected yet";
+    renderLetterGrid();
+    buildStaticLadder();
+  });
+
+  // ---- init ----
+  renderLetterGrid();
+  renderNamesGrid();
+  buildStaticLadder();
+</script>
+</body>
+</html>
