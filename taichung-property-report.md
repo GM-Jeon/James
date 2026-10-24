@@ -60,3 +60,35 @@
 - 信義房屋: https://sinyi.com.tw/communitylist/communityinfo/0018291 , https://www.sinyi.com.tw/communitylist/communityinfo/0022485 , https://www.sinyi.com.tw/buy/list/Taichung-city/408-zip
 - 永慶房屋: https://community.yungching.com.tw/building/37164 , https://community.yungching.com.tw/building/34107
 - 실거래·시세: https://www.leju.com.tw/community/L5561065814e84c , https://community.houseprice.tw/building/118446/ , https://community.houseprice.tw/building/15660/ , https://www.leju.com.tw/map/region?mode=price&city=B&area=B406
+
+---
+
+## v3 추가: 서구(西區) 검토 (현 거주지, 생활 인프라 선호)
+
+### 통근 (출근시간 대략치)
+- 집 → 오페라하우스: 약 10분
+- 집 → 고속철역(高鐵): 차로 20~25분
+- 집 → 딸 학교(北屯·潭子): 차로 25~30분 (30분 조건 안)
+- 타이베이 가는 날 학교 거쳐 고속철역: 약 55~60분 (南屯과 비슷)
+
+### 결론: 위치는 가능, 단 '지은 지 10년'은 예산 안에서 어려움
+- 西區는 이미 개발이 끝난 지역이라 2014~2017년 준공 단지가 적습니다.
+- 지은 지 약 10년 된 3방+평면차위는 호가 2,200~2,800만 수준입니다. 예: 審計新村 옆 中美街 단지, 지은 지 약 10년, 2,800만.
+- 美術館 특구 신축(華太松庭 등)은 2,000만을 훨씬 넘습니다.
+- 西區 전체 1년 평균은 평당 약 40만(+10.6%)으로, 北屯·南屯처럼 하락 중인 지역이 아닙니다.
+
+### 지은 지 15~20년으로 완화하면 예산 안
+| 단지 | 지은 지 | 근거 | 목표가 |
+|---|---|---|---|
+| 勝美術 1·2期 (雲門登峰), 大忠南街, 美術館 인근 | 18~20년 | 실거래 2025/09 1,810만 (차위 130만 포함), 2026/01 1,705만 (차위 포함), 2026/04 1,252만 (소형) | 3방+차위 1,650~1,750만 |
+| 大東家綠璟, 美村路一段 | 26~27년 | 1년 평균 평당 32.2만, 3방+B2 경사로 평면차위 호가 1,528만 | 1,450만 전후 |
+| 金橋福人居, 忠明南路 | 약 27년 | 2년 평균 평당 33.0만, 3방+B1 평면차위 호가 1,698만 | 1,550~1,600만 |
+
+### 추천
+1. 西區 생활권이 최우선이라면 **勝美術(18~20년)** 을 노리세요. 대단지에 거래가 많아 시세가 명확하고, 1,600만대 후반에 협상할 수 있습니다. 차위가 경사로식 평면인지는 확인하세요.
+2. 10년 전후 조건을 지키면서 西區 생활권도 원한다면, 西區와 붙은 **南屯 북쪽(大墩·黎明)** 이나 v2의 總太拾光을 검토하세요. 西區 상권까지 차로 10~15분입니다.
+
+### 출처
+- https://market.591.com.tw/38076 , https://market.591.com.tw/38080 (勝美術), https://www.sinyi.com.tw/communitylist/communityinfo/0016882
+- https://market.591.com.tw/19155 (大東家綠璟), https://market.591.com.tw/19293 (金橋福人居)
+- https://www.housefeel.com.tw/price-all/taichung-city/xitun-district/ (西區 1년 평균), https://www.sinyi.com.tw/buy/list/Taichung-city/403-zip
