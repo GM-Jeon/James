@@ -92,3 +92,12 @@
 - https://market.591.com.tw/38076 , https://market.591.com.tw/38080 (勝美術), https://www.sinyi.com.tw/communitylist/communityinfo/0016882
 - https://market.591.com.tw/19155 (大東家綠璟), https://market.591.com.tw/19293 (金橋福人居)
 - https://www.housefeel.com.tw/price-all/taichung-city/xitun-district/ (西區 1년 평균), https://www.sinyi.com.tw/buy/list/Taichung-city/403-zip
+
+---
+
+## v4: 개별 매물 검토 기록
+
+### 浩瀚森之道 (東區 東光園路, 信義 4646MY): **보류**
+- 1,588만 (차위 160만 포함), 등기 면적 46.47坪, 실내+발코니 24.93坪, 14/24층, 3.6년, 경사로식 평면차위
+- 가격: 같은 크기 3방 실거래 1,810만보다 약 12% 저렴함 → 이후 매물 비교 기준으로 활용
+- 보류 사유: 한 층 6세대에 엘리베이터 2대(동당 약 140세대), 건설사 豐邑 평판(竹北 함몰·浩瀚一品 붕괴 기소, 사후 서비스 불만), 東區 위치
